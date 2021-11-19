@@ -5,6 +5,7 @@ function App() {
       <div className="App">
          <h1>Nimble Memory Match</h1>
          <button>New Game</button>
+         <button>New Game</button>
       </div>
    );
 }
