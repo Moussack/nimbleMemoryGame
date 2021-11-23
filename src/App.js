@@ -4,12 +4,12 @@ import './App.css';
 import SingleCard from './component/SingleCard';
 
 const cardImages = [
-   { src: '/img/helmet-1.png' },
-   { src: '/img/potion-1.png' },
-   { src: '/img/ring-1.png' },
-   { src: '/img/scroll-1.png' },
-   { src: '/img/shield-1.png' },
-   { src: '/img/sword-1.png' },
+   { src: '/img/helmet-1.png', matched: false },
+   { src: '/img/potion-1.png', matched: false },
+   { src: '/img/ring-1.png', matched: false },
+   { src: '/img/scroll-1.png', matched: false },
+   { src: '/img/shield-1.png', matched: false },
+   { src: '/img/sword-1.png', matched: false },
 ];
 
 function App() {
@@ -18,9 +18,9 @@ function App() {
    const [choiceOne, setChoiceOne] = useState(null);
    const [choiceTwo, setChoiceTwo] = useState(null);
 
-   console.log(`C1 : `, choiceOne);
+   /*  console.log(`C1 : `, choiceOne);
    console.log(`C2 : `, choiceTwo);
-   console.log(turns);
+   console.log(turns); */
 
    // shuffle cards
    const shuffleCard = () => {
@@ -37,10 +37,26 @@ function App() {
       choiceOne === null ? setChoiceOne(card) : setChoiceTwo(card);
    };
 
+   // to reset the turns and card choice
+   const resetTurn = () => {
+      setChoiceOne(null);
+      setChoiceTwo(null);
+      setTurns((prev) => prev + 1);
+   };
+
    useEffect(() => {
       if (choiceOne && choiceTwo) {
          if (choiceOne.src === choiceTwo.src) {
             console.log('cards matched');
+            setCards((prevCards) => {
+               return prevCards.map((card) => {
+                  if (card.src === choiceOne.src) {
+                     return { ...card, matched: true };
+                  } else {
+                     return card;
+                  }
+               });
+            });
             resetTurn();
          } else {
             console.log('cards DONT matched');
@@ -49,11 +65,7 @@ function App() {
       }
    }, [choiceOne, choiceTwo]);
 
-   const resetTurn = () => {
-      setChoiceOne(null);
-      setChoiceTwo(null);
-      setTurns((prev) => prev + 1);
-   };
+   console.log(cards);
 
    return (
       <div className="App">
