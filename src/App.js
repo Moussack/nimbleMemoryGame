@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
+
+import SingleCard from './component/SingleCard';
 
 const cardImages = [
    { src: '/img/helmet-1.png' },
@@ -13,9 +15,15 @@ const cardImages = [
 function App() {
    const [cards, setCards] = useState([]);
    const [turns, setTurns] = useState(0);
+   const [choiceOne, setChoiceOne] = useState(null);
+   const [choiceTwo, setChoiceTwo] = useState(null);
+
+   console.log(`C1 : `, choiceOne);
+   console.log(`C2 : `, choiceTwo);
+   console.log(turns);
 
    // shuffle cards
-   const shuffleCards = () => {
+   const shuffleCard = () => {
       const shuffledCards = [...cardImages, ...cardImages]
          .sort(() => Math.random() - 0.5)
          .map((card) => ({ ...card, id: Math.random() }));
@@ -24,30 +32,41 @@ function App() {
       setTurns(0);
    };
 
-   console.log(cards, turns);
+   // Handle choice
+   const handleChoice = (card) => {
+      choiceOne === null ? setChoiceOne(card) : setChoiceTwo(card);
+   };
+
+   useEffect(() => {
+      if (choiceOne && choiceTwo) {
+         if (choiceOne.src === choiceTwo.src) {
+            console.log('cards matched');
+            resetTurn();
+         } else {
+            console.log('cards DONT matched');
+            resetTurn();
+         }
+      }
+   }, [choiceOne, choiceTwo]);
+
+   const resetTurn = () => {
+      setChoiceOne(null);
+      setChoiceTwo(null);
+      setTurns((prev) => prev + 1);
+   };
 
    return (
       <div className="App">
          <h1>Nimble Memory Match</h1>
-         <button onClick={shuffleCards}>New Game</button>
+
+         <button onClick={shuffleCard}>New Game</button>
+         <div className="card-grid">
+            {cards.map((card) => (
+               <SingleCard handleChoice={handleChoice} card={card} key={card.id} />
+            ))}
+         </div>
       </div>
    );
 }
 
 export default App;
-
-/* Array.prototype.sort = function () {
-   for (let i = this.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [this[i], this[j]] = [this[j], this[i]];
-   }
-   return this;
-};
-
-Array.prototype.map = function (callback) {
-   const result = [];
-   for (let i = 0; i < this.length; i++) {
-      result.push(callback(this[i], i, this));
-   }
-   return result;
-}; */
