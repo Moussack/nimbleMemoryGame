@@ -17,6 +17,7 @@ function App() {
    const [turns, setTurns] = useState(0);
    const [choiceOne, setChoiceOne] = useState(null);
    const [choiceTwo, setChoiceTwo] = useState(null);
+   const [disabled, setDisabled] = useState(false);
 
    /*  console.log(`C1 : `, choiceOne);
    console.log(`C2 : `, choiceTwo);
@@ -28,6 +29,8 @@ function App() {
          .sort(() => Math.random() - 0.5)
          .map((card) => ({ ...card, id: Math.random() }));
 
+      setChoiceOne(null);
+      setChoiceTwo(null);
       setCards(shuffledCards);
       setTurns(0);
    };
@@ -42,10 +45,13 @@ function App() {
       setChoiceOne(null);
       setChoiceTwo(null);
       setTurns((prev) => prev + 1);
+      setDisabled(false);
    };
 
    useEffect(() => {
       if (choiceOne && choiceTwo) {
+         setDisabled(true);
+
          if (choiceOne.src === choiceTwo.src) {
             console.log('cards matched');
             setCards((prevCards) => {
@@ -62,16 +68,22 @@ function App() {
             console.log('cards DONT matched');
             setTimeout(() => {
                resetTurn();
-            }, 500);
+            }, 750);
          }
       }
    }, [choiceOne, choiceTwo]);
 
    console.log(cards);
 
+   // start the game automatically
+   useEffect(() => {
+      shuffleCard();
+   }, []);
+
    return (
       <div className="App">
-         <h1>Nimble Memory Match</h1>
+         <h1>Nimble Memory Match </h1>
+         <h2>Turns : {turns}</h2>
 
          <button onClick={shuffleCard}>New Game</button>
          <div className="card-grid">
@@ -81,6 +93,7 @@ function App() {
                   handleChoice={handleChoice}
                   card={card}
                   key={card.id}
+                  disabled={disabled}
                />
             ))}
          </div>
